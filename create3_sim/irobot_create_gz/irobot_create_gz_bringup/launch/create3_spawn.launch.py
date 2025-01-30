@@ -34,6 +34,15 @@ ARGUMENTS = [
 ]
 
 for pose_element in ['x', 'y', 'z', 'yaw']:
+    if pose_element=='x':
+        default_value='10.3'
+    if pose_element=='y':
+        default_value='-2.37'
+    if pose_element=='z':
+        default_value='0.02'
+    if pose_element=='yaw':
+        default_value='0.0'
+
     ARGUMENTS.append(DeclareLaunchArgument(pose_element, default_value='0.0',
                      description=f'{pose_element} component of the robot pose.'))
 

@@ -6,6 +6,7 @@ Panels:
       Expanded:
         - /Global Options1
         - /RobotModel1/Description Topic1
+        - /TF1
       Splitter Ratio: 0.5
     Tree Height: 775
   - Class: rviz_common/Selection
@@ -242,21 +243,162 @@ Visualization Manager:
       Value: true
       Visual Enabled: true
     - Class: rviz_default_plugins/TF
-      Enabled: false
+      Enabled: true
       Filter (blacklist): ""
       Filter (whitelist): ""
       Frame Timeout: 15
       Frames:
         All Enabled: true
-      Marker Scale: 1
+        base_link:
+          Value: true
+        bump_front_center:
+          Value: true
+        bump_front_left:
+          Value: true
+        bump_front_right:
+          Value: true
+        bump_left:
+          Value: true
+        bump_right:
+          Value: true
+        bumper:
+          Value: true
+        button_1:
+          Value: true
+        button_2:
+          Value: true
+        button_power:
+          Value: true
+        cliff_front_left:
+          Value: true
+        cliff_front_right:
+          Value: true
+        cliff_side_left:
+          Value: true
+        cliff_side_right:
+          Value: true
+        create3/lidar_link/lidar:
+          Value: true
+        front_caster_link:
+          Value: true
+        green_buoy_link:
+          Value: true
+        halo_link:
+          Value: true
+        imu_link:
+          Value: true
+        ir_intensity_front_center_left:
+          Value: true
+        ir_intensity_front_center_right:
+          Value: true
+        ir_intensity_front_left:
+          Value: true
+        ir_intensity_front_right:
+          Value: true
+        ir_intensity_left:
+          Value: true
+        ir_intensity_right:
+          Value: true
+        ir_intensity_side_left:
+          Value: true
+        ir_omni:
+          Value: true
+        left_wheel:
+          Value: true
+        lidar_link:
+          Value: true
+        mouse:
+          Value: true
+        odom:
+          Value: true
+        red_buoy_link:
+          Value: true
+        right_wheel:
+          Value: true
+        std_dock_link:
+          Value: true
+        wheel_drop_left:
+          Value: true
+        wheel_drop_right:
+          Value: true
+        yellow_buoy_link:
+          Value: true
+      Marker Scale: 0.5
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: false
       Tree:
-        {}
+        odom:
+          base_link:
+            bump_front_center:
+              {}
+            bump_front_left:
+              {}
+            bump_front_right:
+              {}
+            bump_left:
+              {}
+            bump_right:
+              {}
+            bumper:
+              {}
+            button_1:
+              {}
+            button_2:
+              {}
+            button_power:
+              {}
+            cliff_front_left:
+              {}
+            cliff_front_right:
+              {}
+            cliff_side_left:
+              {}
+            cliff_side_right:
+              {}
+            front_caster_link:
+              {}
+            imu_link:
+              {}
+            ir_intensity_front_center_left:
+              {}
+            ir_intensity_front_center_right:
+              {}
+            ir_intensity_front_left:
+              {}
+            ir_intensity_front_right:
+              {}
+            ir_intensity_left:
+              {}
+            ir_intensity_right:
+              {}
+            ir_intensity_side_left:
+              {}
+            ir_omni:
+              {}
+            lidar_link:
+              create3/lidar_link/lidar:
+                {}
+            mouse:
+              {}
+            wheel_drop_left:
+              left_wheel:
+                {}
+            wheel_drop_right:
+              right_wheel:
+                {}
+          std_dock_link:
+            green_buoy_link:
+              {}
+            halo_link:
+              {}
+            red_buoy_link:
+              {}
+            yellow_buoy_link:
+              {}
       Update Interval: 0
-      Value: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -303,7 +445,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 0.7980121970176697
+      Distance: 1.1785054206848145
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -318,10 +460,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.3047969937324524
+      Pitch: 0.43979722261428833
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.610398530960083
+      Yaw: 0.9122350215911865
     Saved: ~
 Window Geometry:
   Displays:
