@@ -234,7 +234,7 @@ def generate_launch_description():
     ld.add_action(cmd_vel_bridge)
     ld.add_action(lidar_bridge)
     ld.add_action(lidar_tf)
-    ld.add_action(map_odom_tf)
+    # ld.add_action(map_odom_tf)
     ld.add_action(pose_bridge)
     ld.add_action(odom_base_tf_bridge)
     ld.add_action(bumper_contact_bridge)
