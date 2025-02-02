@@ -40,6 +40,7 @@ def generate_launch_description():
         'waypoint_follower',
         'docking_server',
         'map_saver',
+        'map_server',
     ]
 
     # Map fully qualified names to relative ones so the node's namespace can be prepended.
@@ -102,7 +103,7 @@ def generate_launch_description():
     )
     declare_map_yaml_cmd = DeclareLaunchArgument(
         'map', 
-        default_value=os.path.join(get_package_share_directory('lyra_slam'), 'maps', 'map_1738415804.yaml'), 
+        default_value=os.path.join(get_package_share_directory('lyra_slam'), 'maps', 'map_1738526783.yaml'), 
         description='Full path to map yaml file to load'
     )
 
@@ -167,7 +168,7 @@ def generate_launch_description():
                 respawn_delay=2.0,
                 parameters=[configured_params],
                 arguments=['--ros-args', '--log-level', log_level],
-                remappings=remappings + [('cmd_vel', 'cmd_vel_nav')],
+                remappings=remappings + [('cmd_vel', 'cmd_vel_unstamped')],
             ),
             Node(
                 package='nav2_bt_navigator',
@@ -228,6 +229,18 @@ def generate_launch_description():
             Node(
                 package='nav2_map_server',
                 executable='map_saver_server',
+                name='map_saver',
+                output='screen',
+                respawn=use_respawn,
+                respawn_delay=2.0,
+                parameters=[configured_params],
+                arguments=['--ros-args', '--log-level', log_level],
+                remappings=remappings,
+            ),
+            Node(
+                package='nav2_map_server',
+                executable='map_server',
+                name='map_server',
                 output='screen',
                 respawn=use_respawn,
                 respawn_delay=2.0,
