@@ -48,7 +48,11 @@ def generate_launch_description():
         executable = 'cartographer_occupancy_grid_node',
         parameters = [
             {'use_sim_time': LaunchConfiguration('use_sim_time')},
-            {'resolution': 0.05}],
+            {'resolution': 0.05},
+            # {'occupancy_grid_topic': "/carto/map"},
+            ],
+        remappings = [
+            ('/map', '/carto/map')],
         )
 
     return LaunchDescription([
