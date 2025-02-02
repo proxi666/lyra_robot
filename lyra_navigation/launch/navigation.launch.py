@@ -25,6 +25,9 @@ def generate_launch_description():
     container_name_full = (namespace, '/', container_name)
     use_respawn = LaunchConfiguration('use_respawn')
     log_level = LaunchConfiguration('log_level')
+    map_yaml_file = LaunchConfiguration('map')
+    rviz_config_file = LaunchConfiguration('rviz_config')
+
 
     lifecycle_nodes = [
         'controller_server',
@@ -36,6 +39,8 @@ def generate_launch_description():
         'bt_navigator',
         'waypoint_follower',
         'docking_server',
+        'map_saver',
+        'map_server',
     ]
 
     # Map fully qualified names to relative ones so the node's namespace can be prepended.
@@ -69,7 +74,7 @@ def generate_launch_description():
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(
         'use_sim_time',
-        default_value='false',
+        default_value='true',
         description='Use simulation (Gazebo) clock if true',
     )
 
@@ -96,6 +101,17 @@ def generate_launch_description():
         default_value='nav2_container',
         description='the name of conatiner that nodes will load in if use composition',
     )
+    declare_map_yaml_cmd = DeclareLaunchArgument(
+        'map', 
+        default_value=os.path.join(get_package_share_directory('lyra_slam'), 'maps', 'map_1738526783.yaml'), 
+        description='Full path to map yaml file to load'
+    )
+
+    declare_rviz_config_file_cmd = DeclareLaunchArgument(
+        'rviz_config',
+        default_value=os.path.join(navigation_dir, 'rviz', 'nav2.rviz'),
+        description='Full path to the RVIZ config file to use',
+    )
 
     declare_use_respawn_cmd = DeclareLaunchArgument(
         'use_respawn',
@@ -119,7 +135,7 @@ def generate_launch_description():
                 respawn_delay=2.0,
                 parameters=[configured_params],
                 arguments=['--ros-args', '--log-level', log_level],
-                remappings=remappings + [('cmd_vel', 'cmd_vel_nav')],
+                remappings=remappings + [('cmd_vel', 'cmd_vel_unstamped')],
             ),
             Node(
                 package='nav2_smoother',
@@ -152,7 +168,7 @@ def generate_launch_description():
                 respawn_delay=2.0,
                 parameters=[configured_params],
                 arguments=['--ros-args', '--log-level', log_level],
-                remappings=remappings + [('cmd_vel', 'cmd_vel_nav')],
+                remappings=remappings + [('cmd_vel', 'cmd_vel_unstamped')],
             ),
             Node(
                 package='nav2_bt_navigator',
@@ -211,6 +227,28 @@ def generate_launch_description():
                 remappings=remappings,
             ),
             Node(
+                package='nav2_map_server',
+                executable='map_saver_server',
+                name='map_saver',
+                output='screen',
+                respawn=use_respawn,
+                respawn_delay=2.0,
+                parameters=[configured_params],
+                arguments=['--ros-args', '--log-level', log_level],
+                remappings=remappings,
+            ),
+            Node(
+                package='nav2_map_server',
+                executable='map_server',
+                name='map_server',
+                output='screen',
+                respawn=use_respawn,
+                respawn_delay=2.0,
+                parameters=[configured_params, {'yaml_filename': map_yaml_file}],
+                arguments=['--ros-args', '--log-level', log_level],
+                remappings=remappings,
+            ),
+            Node(
                 package='nav2_lifecycle_manager',
                 executable='lifecycle_manager',
                 name='lifecycle_manager_navigation',
@@ -218,6 +256,19 @@ def generate_launch_description():
                 arguments=['--ros-args', '--log-level', log_level],
                 parameters=[{'autostart': autostart}, {'node_names': lifecycle_nodes}],
             ),
+                # Launch rviz
+            Node(
+                package='rviz2',
+                executable='rviz2',
+                namespace=namespace,
+                arguments=['-d', rviz_config_file],
+                output='screen',
+                parameters=[{'use_sim_time': use_sim_time}],
+                remappings=[
+                    ('/tf', 'tf'),
+                    ('/tf_static', 'tf_static'),
+                ],
+            )
         ],
     )
 
@@ -320,6 +371,8 @@ def generate_launch_description():
     ld.add_action(declare_container_name_cmd)
     ld.add_action(declare_use_respawn_cmd)
     ld.add_action(declare_log_level_cmd)
+    ld.add_action(declare_map_yaml_cmd)
+    ld.add_action(declare_rviz_config_file_cmd)
     # Add the actions to launch all of the navigation nodes
     ld.add_action(load_nodes)
     ld.add_action(load_composable_nodes)

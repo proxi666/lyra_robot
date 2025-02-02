@@ -15,6 +15,7 @@ from lifecycle_msgs.msg import Transition
 def generate_launch_description():
     autostart = LaunchConfiguration('autostart')
     use_lifecycle_manager = LaunchConfiguration("use_lifecycle_manager")
+    map = LaunchConfiguration("map_file_name")
 
     declare_autostart_cmd = DeclareLaunchArgument(
         'autostart', default_value='true',
@@ -23,11 +24,16 @@ def generate_launch_description():
     declare_use_lifecycle_manager = DeclareLaunchArgument(
         'use_lifecycle_manager', default_value='false',
         description='Enable bond connection during node activation')
+    
+    declare_map_file_name_cmd = DeclareLaunchArgument(
+        'map_file_name', default_value=get_package_share_directory("lyra_slam") + '/maps/map_1738526783.yaml',
+        description='map file path')
 
     start_lifelong_slam_toolbox_node = LifecycleNode(
           parameters=[
             get_package_share_directory("lyra_slam") + '/config/mapper_params_lifelong.yaml',
-            {'use_lifecycle_manager': use_lifecycle_manager}
+            {'use_lifecycle_manager': use_lifecycle_manager},
+            # {'map_file_name': map}
           ],
           package='slam_toolbox',
           executable='lifelong_slam_toolbox_node',
@@ -63,6 +69,7 @@ def generate_launch_description():
     ld = LaunchDescription()
 
     ld.add_action(declare_autostart_cmd)
+    ld.add_action(declare_map_file_name_cmd)
     ld.add_action(declare_use_lifecycle_manager)
     ld.add_action(start_lifelong_slam_toolbox_node)
     ld.add_action(configure_event)

@@ -16,7 +16,8 @@ find_package(ament_cmake REQUIRED)
 
 install(DIRECTORY 
   config 
-  launch 
+  launch
+  maps 
   rviz
   DESTINATION share/${PROJECT_NAME}
 )
