@@ -1,0 +1,603 @@
+<sdf version="1.7">
+  <world name="sim_world">
+    <physics name="10ms" type="ode">
+      <max_step_size>0.01</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+    <plugin filename="libgz-sim-physics-system.so" name="gz::sim::systems::Physics">
+    </plugin>
+    <plugin filename="libgz-sim-user-commands-system.so" name="gz::sim::systems::UserCommands">
+    </plugin>
+    <plugin filename="libgz-sim-scene-broadcaster-system.so" name="gz::sim::systems::SceneBroadcaster">
+    </plugin>
+    <plugin filename="libdoor.so" name="door">
+    </plugin>
+    <plugin filename="liblift.so" name="lift">
+    </plugin>
+
+    <actor name="actor_walking">
+      <skin>
+          <filename>https://fuel.gazebosim.org/1.0/Mingfei/models/actor/tip/files/meshes/walk.dae</filename>
+          <scale>1.0</scale>
+      </skin>
+      <!-- <animation name="walk">
+          <filename>https://fuel.gazebosim.org/1.0/Mingfei/models/actor/tip/files/meshes/walk.dae</filename>
+          <interpolate_x>true</interpolate_x>
+      </animation> -->
+      <script>
+        <loop>true</loop>
+        <delay_start>0.000000</delay_start>
+        <auto_start>true</auto_start>
+        <trajectory id="0" type="walk" tension="1.0">
+            <waypoint>
+                <time>0</time>
+                <pose>0 0 1.0 0 0 0</pose>
+            </waypoint>
+            <waypoint>
+                <time>2</time>
+                <pose>2.0 0 1.0 0 0 0</pose>
+            </waypoint>
+            <waypoint>
+                <time>2.5</time>
+                <pose>2 0 1.0 0 0 1.57</pose>
+            </waypoint>
+            <waypoint>
+                <time>4</time>
+                <pose>2 2 1.0 0 0 1.57</pose>
+            </waypoint>
+            <waypoint>
+                <time>4.5</time>
+                <pose>2 2 1.0 0 0 3.142</pose>
+            </waypoint>
+            <waypoint>
+                <time>6</time>
+                <pose>0 2 1 0 0 3.142</pose>
+            </waypoint>
+            <waypoint>
+                <time>6.5</time>
+                <pose>0 2 1 0 0 -1.57</pose>
+            </waypoint>
+            <waypoint>
+                <time>8</time>
+                <pose>0 0 1.0 0 0 -1.57</pose>
+            </waypoint>
+            <waypoint>
+                <time>8.5</time>
+                <pose>0 0 1.0 0 0 0</pose>
+            </waypoint>
+        </trajectory>
+    </script>
+  </actor>
+
+    <scene>
+      <ambient>1 1 1</ambient>
+      <background>0.8 0.8 0.8</background>
+      <grid>false</grid>
+    </scene>
+    <gui fullscreen="0">
+      <window>
+        <width>1000</width>
+        <height>845</height>
+        <style material_theme="Light" material_primary="DeepOrange" material_accent="LightBlue" toolbar_color_light="#f3f3f3" toolbar_text_color_light="#111111" toolbar_color_dark="#414141" toolbar_text_color_dark="#f3f3f3" plugin_toolbar_color_light="#bbdefb" plugin_toolbar_text_color_light="#111111" plugin_toolbar_color_dark="#607d8b" plugin_toolbar_text_color_dark="#eeeeee" />
+        <menus>
+          <drawer default="false">
+          </drawer>
+        </menus>
+      </window>
+      <plugin filename="MinimalScene" name="3D View">
+        <gz-gui>
+          <title>3D View</title>
+          <property type="bool" key="showTitleBar">false</property>
+          <property type="string" key="state">docked</property>
+        </gz-gui>
+        <engine>ogre2</engine>
+        <scene>scene</scene>
+        <ambient_light>0.4 0.4 0.4</ambient_light>
+        <background_color>0.8 0.8 0.8</background_color>
+        <camera_pose>7.444813970591085 -24.355862464930436 10 0 0.6 1.57</camera_pose>
+      </plugin>
+      <plugin filename="EntityContextMenuPlugin" name="Entity context menu">
+        <gz-gui>
+          <property key="state" type="string">floating</property>
+          <property key="width" type="double">5</property>
+          <property key="height" type="double">5</property>
+          <property key="showTitleBar" type="bool">false</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="GzSceneManager" name="Scene Manager">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="width" type="double">5</property>
+          <property key="height" type="double">5</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="InteractiveViewControl" name="Interactive view control">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="width" type="double">5</property>
+          <property key="height" type="double">5</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="CameraTracking" name="Camera Tracking">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="width" type="double">5</property>
+          <property key="height" type="double">5</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="MarkerManager" name="Marker manager">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="width" type="double">5</property>
+          <property key="height" type="double">5</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="SelectEntities" name="Select Entities">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="width" type="double">5</property>
+          <property key="height" type="double">5</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="Spawn" name="Spawn Entities">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="width" type="double">5</property>
+          <property key="height" type="double">5</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="VisualizationCapabilities" name="Visualization Capabilities">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="width" type="double">5</property>
+          <property key="height" type="double">5</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="WorldControl" name="World control">
+        <gz-gui>
+          <title>World control</title>
+          <property type="bool" key="showTitleBar">false</property>
+          <property type="bool" key="resizable">false</property>
+          <property type="double" key="height">72</property>
+          <property type="double" key="z">1</property>
+          <property type="string" key="state">floating</property>
+          <anchors target="3D View">
+            <line own="left" target="left" />
+            <line own="bottom" target="bottom" />
+          </anchors>
+        </gz-gui>
+        <play_pause>true</play_pause>
+        <step>true</step>
+        <start_paused>true</start_paused>
+        <use_event>true</use_event>
+      </plugin>
+      <plugin filename="WorldStats" name="World stats">
+        <gz-gui>
+          <title>World stats</title>
+          <property type="bool" key="showTitleBar">false</property>
+          <property type="bool" key="resizable">false</property>
+          <property type="double" key="height">110</property>
+          <property type="double" key="width">290</property>
+          <property type="double" key="z">1</property>
+          <property type="string" key="state">floating</property>
+          <anchors target="3D View">
+            <line own="right" target="right" />
+            <line own="bottom" target="bottom" />
+          </anchors>
+        </gz-gui>
+        <sim_time>true</sim_time>
+        <real_time>true</real_time>
+        <real_time_factor>true</real_time_factor>
+        <iterations>true</iterations>
+      </plugin>
+      <plugin filename="Shapes" name="Shapes">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="x" type="double">0</property>
+          <property key="y" type="double">0</property>
+          <property key="width" type="double">250</property>
+          <property key="height" type="double">50</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+          <property key="cardBackground" type="string">#666666</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="Lights" name="Lights">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="x" type="double">250</property>
+          <property key="y" type="double">0</property>
+          <property key="width" type="double">150</property>
+          <property key="height" type="double">50</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+          <property key="cardBackground" type="string">#666666</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="TransformControl" name="Transform control">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="x" type="double">0</property>
+          <property key="y" type="double">50</property>
+          <property key="width" type="double">250</property>
+          <property key="height" type="double">50</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+          <property key="cardBackground" type="string">#777777</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="Screenshot" name="Screenshot">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="x" type="double">250</property>
+          <property key="y" type="double">50</property>
+          <property key="width" type="double">50</property>
+          <property key="height" type="double">50</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+          <property key="cardBackground" type="string">#777777</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="CopyPaste" name="CopyPaste">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="x" type="double">300</property>
+          <property key="y" type="double">50</property>
+          <property key="width" type="double">100</property>
+          <property key="height" type="double">50</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+          <property key="cardBackground" type="string">#777777</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="ComponentInspector" name="Component inspector">
+        <gz-gui>
+          <property type="bool" key="showTitleBar">false</property>
+          <property type="string" key="state">docked</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="EntityTree" name="Entity tree">
+        <gz-gui>
+          <property type="bool" key="showTitleBar">false</property>
+          <property type="string" key="state">docked</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="toggle_charging" name="toggle_charging" />
+      <plugin name="toggle_floors" filename="toggle_floors">
+        <floor name="flat" model_name="home_flat">
+          <model name="OpenRobotics/Sofa" />
+          <model name="OpenRobotics/TVStand" />
+          <model name="OpenRobotics/Table" />
+          <model name="OpenRobotics/WoodenChair" />
+          <model name="OpenRobotics/WoodenChair_2" />
+          <model name="OpenRobotics/WoodenChair_3" />
+          <model name="OpenRobotics/WoodenChair_4" />
+          <model name="OpenRobotics/WoodenChair_5" />
+          <model name="OpenRobotics/WoodenChair_6" />
+          <model name="OpenRobotics/NormalBed" />
+          <model name="OpenRobotics/NormalBed_2" />
+          <model name="OpenRobotics/NormalBed_3" />
+          <model name="OpenRobotics/Toilet" />
+          <model name="OpenRobotics/Toilet_2" />
+          <model name="OpenRobotics/Toilet_3" />
+          <model name="OpenRobotics/BathroomSink" />
+          <model name="OpenRobotics/BathroomSink_2" />
+          <model name="OpenRobotics/BathroomSink_3" />
+          <model name="OpenRobotics/Fridge" />
+          <model name="OpenRobotics/KitchenCountertop" />
+          <model name="OpenRobotics/Desk" />
+          <model name="OpenRobotics/DeskChair" />
+          <model name="OpenRobotics/TVStand_2" />
+          <model name="OpenRobotics/MetalCabinetYellow" />
+          <model name="OpenRobotics/MetalCabinetYellow_2" />
+          <model name="OpenRobotics/MetalCabinetYellow_3" />
+          <model name="OpenRobotics/MetalCabinetYellow_4" />
+          <model name="OpenRobotics/MetalCabinetYellow_5" />
+          <model name="OpenRobotics/MetalCabinetYellow_6" />
+          <model name="OpenRobotics/MetalCabinetYellow_7" />
+          <model name="OpenRobotics/TrashBin" />
+          <model name="OpenRobotics/TrashBin_2" />
+          <model name="OpenRobotics/TrashBin_3" />
+          <model name="null" />
+        </floor>
+      </plugin>
+    </gui>
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>1 1 1 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.09</constant>
+        <linear>0.001</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+    
+    <include>
+      <name>OpenRobotics/Sofa</name>
+      <uri>model://Sofa</uri>
+      <pose>7.350646647735587 -5.2623915015075475 0.0 0 0 -3.1416</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/TVStand</name>
+      <uri>model://TVStand</uri>
+      <pose>4.589990736019237 -5.278020580236073 0.0 0 0 1.5708</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/Table</name>
+      <uri>model://Table</uri>
+      <pose>6.829132320977627 -1.2577586047426188 0.0 0 0 1.5708</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/WoodenChair</name>
+      <uri>model://WoodenChair</uri>
+      <pose>7.527418748110058 -0.7887588319189571 0.0 0 0 3.1237</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/WoodenChair_2</name>
+      <uri>model://WoodenChair</uri>
+      <pose>7.506576437278472 -1.299443226405792 0.0 0 0 3.089</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/WoodenChair_3</name>
+      <uri>model://WoodenChair</uri>
+      <pose>7.517002901484593 -1.8309911668855299 0.0 0 0 3.1194</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/WoodenChair_4</name>
+      <uri>model://WoodenChair</uri>
+      <pose>6.151677587096124 -0.7470635926751258 0.0 0 0 -0.0217</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/WoodenChair_5</name>
+      <uri>model://WoodenChair</uri>
+      <pose>6.141251122890002 -1.2577586047426188 0.0 0 0 0.0204</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/WoodenChair_6</name>
+      <uri>model://WoodenChair</uri>
+      <pose>6.1204088120584155 -1.7997223918478207 0.0 0 0 -0.0222</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/NormalBed</name>
+      <uri>model://NormalBed</uri>
+      <pose>1.3738512316568159 -4.891020382833881 0.0 0 0 0.0011</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/NormalBed_2</name>
+      <uri>model://NormalBed</uri>
+      <pose>9.687756649425028 -6.27889743853987 0.0 0 0 1.5708</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/NormalBed_3</name>
+      <uri>model://NormalBed</uri>
+      <pose>13.661725973249752 -5.434789158650937 0.0 0 0 3.1354</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/Toilet</name>
+      <uri>model://Toilet</uri>
+      <pose>14.278416293025716 -2.568997963259411 0.0 0 0 1.5708</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/Toilet_2</name>
+      <uri>model://Toilet</uri>
+      <pose>11.862980398822463 -2.582344262146474 0.0 0 0 1.5708</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/Toilet_3</name>
+      <uri>model://Toilet</uri>
+      <pose>0.6665717137070877 -7.413216050552979 0.0 0 0 1.5708</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/BathroomSink</name>
+      <uri>model://BathroomSink</uri>
+      <pose>2.2946609142188925 -7.266417380375945 0.0 0 0 -1.5959</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/BathroomSink_2</name>
+      <uri>model://BathroomSink</uri>
+      <pose>10.942181333841043 -1.835025847535557 0.0 0 0 0.0167</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/BathroomSink_3</name>
+      <uri>model://BathroomSink</uri>
+      <pose>12.743740567142693 -1.835025847535557 0.0 0 0 0.0135</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/Fridge</name>
+      <uri>model://Fridge</uri>
+      <pose>8.527966461413458 -0.455239388290938 0.0 0 0 0.0</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/KitchenCountertop</name>
+      <uri>model://KitchenCountertop</uri>
+      <pose>10.10173611927911 -0.5490457134040652 0.0 0 0 -1.5708</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/Desk</name>
+      <uri>model://Desk</uri>
+      <pose>13.94462079230059 -7.031641436867007 0.0 0 0 1.5708</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/DeskChair</name>
+      <uri>model://DeskChair</uri>
+      <pose>13.961184218127016 -6.462698377309914 0.0 0 0 -1.589</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/TVStand_2</name>
+      <uri>model://TVStand</uri>
+      <pose>11.76780440580446 -5.554725349763318 0.0 0 0 1.5708</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/MetalCabinetYellow</name>
+      <uri>model://MetalCabinetYellow</uri>
+      <pose>3.894316233728665 -4.719896835369448 0.0 0 0 -1.5769</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/MetalCabinetYellow_2</name>
+      <uri>model://MetalCabinetYellow</uri>
+      <pose>3.894316233728665 -5.552899125890148 0.0 0 0 -1.5655</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/MetalCabinetYellow_3</name>
+      <uri>model://MetalCabinetYellow</uri>
+      <pose>8.341415569253 -4.794166812071918 0.0 0 0 1.5708</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/MetalCabinetYellow_4</name>
+      <uri>model://MetalCabinetYellow</uri>
+      <pose>8.334301790212162 -5.605265033695235 0.0 0 0 1.5708</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/MetalCabinetYellow_5</name>
+      <uri>model://MetalCabinetYellow</uri>
+      <pose>8.341415569253 -6.41637387289921 0.0 0 0 1.5708</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/MetalCabinetYellow_6</name>
+      <uri>model://MetalCabinetYellow</uri>
+      <pose>14.463045403087083 -3.6663567770021417 0.0 0 0 -1.5708</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/MetalCabinetYellow_7</name>
+      <uri>model://MetalCabinetYellow</uri>
+      <pose>14.463045403087083 -4.488401724283821 0.0 0 0 -1.5585</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/TrashBin</name>
+      <uri>model://TrashBin</uri>
+      <pose>12.629803309102064 -2.8999160996262288 0.0 0 0 1.5708</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/TrashBin_2</name>
+      <uri>model://TrashBin</uri>
+      <pose>11.299823920723963 -1.4676363216086272 0.0 0 0 1.5708</pose>
+      <static>True</static>
+    </include>
+    <include>
+      <name>OpenRobotics/TrashBin_3</name>
+      <uri>model://TrashBin</uri>
+      <pose>2.0822774483176048 -6.748555501364325 0.0 0 0 1.5708</pose>
+      <static>True</static>
+    </include>
+    <model name="null">
+      <pose>4.772682137610524 -0.823170410831424 0.0 0 0 3.141592653589793</pose>
+      <link name="right">
+        <pose>0 0 1.11 0 0 0</pose>
+        <visual name="right_visual">
+          <geometry>
+            <box>
+              <size>1.108678915703926 0.03 2.2</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.5 0.25 0 0.6</ambient>
+            <diffuse>0.5 0.25 0 0.6</diffuse>
+            <pbr>
+              <metal>
+                <metalness>0.0</metalness>
+              </metal>
+            </pbr>
+          </material>
+        </visual>
+        <collision name="right_collision">
+          <geometry>
+            <box>
+              <size>1.108678915703926 0.03 2.2</size>
+            </box>
+          </geometry>
+          <surface>
+            <contact>
+              <collide_bitmask>0x02</collide_bitmask>
+            </contact>
+          </surface>
+        </collision>
+        <inertial>
+          <mass>50.0</mass>
+          <inertia>
+            <ixx>20.17041666666667</ixx>
+            <iyy>25.288203908860144</iyy>
+            <izz>5.125287242193472</izz>
+          </inertia>
+        </inertial>
+      </link>
+      <joint name="right_joint" type="revolute">
+        <parent>world</parent>
+        <child>right</child>
+        <axis>
+          <xyz>0 0 -1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.57</upper>
+          </limit>
+        </axis>
+        <pose>0.559339457851963 0 0 0 0 0</pose>
+      </joint>
+      <plugin name="register_component" filename="libregister_component.so">
+        <component name="Door">
+          <v_max_door>0.5</v_max_door>
+          <a_max_door>0.3</a_max_door>
+          <a_nom_door>0.15</a_nom_door>
+          <dx_min_door>0.01</dx_min_door>
+          <f_max_door>500.0</f_max_door>
+          <ros_interface>true</ros_interface>
+          <door name="null" type="SwingDoor" left_joint_name="empty_joint" right_joint_name="right_joint" />
+        </component>
+      </plugin>
+    </model>
+    <include>
+      <name>home_flat</name>
+      <uri>model://home_flat</uri>
+      <pose>0 0 0.0 0 0 0</pose>
+    </include>
+    <rmf_charger_waypoints name="charger_waypoints" />
+  </world>
+</sdf>
