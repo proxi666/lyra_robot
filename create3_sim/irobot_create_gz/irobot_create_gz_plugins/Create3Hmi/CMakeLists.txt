@@ -6,8 +6,17 @@ endif()
 
 set(CMAKE_AUTOMOC ON)
 
-find_package(gz_gui_vendor REQUIRED)
-find_package(gz-gui REQUIRED)
+find_package(gz_gui_vendor QUIET)
+if(gz_gui_vendor_FOUND)
+  find_package(gz-gui REQUIRED)
+  set(IROBOT_CREATE_GUI_TARGET gz-gui::gz-gui)
+  set(IROBOT_CREATE_GUI_AMENT_DEPS gz_gui_vendor gz-gui)
+else()
+  find_package(ignition-gui6 REQUIRED)
+  set(IROBOT_CREATE_GUI_TARGET ignition-gui6::ignition-gui6)
+  set(IROBOT_CREATE_GUI_AMENT_DEPS)
+endif()
+
 find_package(Qt5
   COMPONENTS
     Core
@@ -25,6 +34,9 @@ add_library(
     Create3Hmi.cc
     ${resources_rcc}
 )
+if(NOT gz_gui_vendor_FOUND)
+  target_compile_definitions(Create3Hmi PRIVATE IROBOT_CREATE_USE_IGNITION_GUI=1)
+endif()
 include_directories(
     ${Qt5Core_INCLUDE_DIRS}
     ${Qt5Qml_INCLUDE_DIRS}
@@ -33,16 +45,15 @@ include_directories(
 )
 target_link_libraries(Create3Hmi
   PUBLIC
-    gz-gui::gz-gui
+    ${IROBOT_CREATE_GUI_TARGET}
     ${Qt5Core_LIBRARIES}
     ${Qt5Qml_LIBRARIES}
     ${Qt5Quick_LIBRARIES}
     ${Qt5QuickControls2_LIBRARIES}
 )
-ament_target_dependencies(Create3Hmi
-  gz_gui_vendor
-  gz-gui
-)
+if(IROBOT_CREATE_GUI_AMENT_DEPS)
+  ament_target_dependencies(Create3Hmi ${IROBOT_CREATE_GUI_AMENT_DEPS})
+endif()
 
 install(
   TARGETS Create3Hmi

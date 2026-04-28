@@ -11,8 +11,16 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 find_package(ament_cmake REQUIRED)
-find_package(gz_math_vendor REQUIRED)
-find_package(gz-math REQUIRED)
+find_package(gz_math_vendor QUIET)
+if(gz_math_vendor_FOUND)
+  find_package(gz-math REQUIRED)
+  set(IROBOT_CREATE_MATH_TARGET gz-math::gz-math)
+  set(IROBOT_CREATE_MATH_EXPORT_DEPS gz_math_vendor gz-math)
+else()
+  find_package(ignition-math6 REQUIRED)
+  set(IROBOT_CREATE_MATH_TARGET ignition-math6::ignition-math6)
+  set(IROBOT_CREATE_MATH_EXPORT_DEPS ignition-math6)
+endif()
 find_package(rclcpp REQUIRED)
 
 #### Libraries
@@ -29,7 +37,7 @@ target_include_directories(irobot_create_toolbox PUBLIC
 
 target_link_libraries(irobot_create_toolbox
   PUBLIC
-    gz-math::gz-math
+    ${IROBOT_CREATE_MATH_TARGET}
     ${rclcpp_TARGETS}
 )
 
@@ -47,8 +55,7 @@ install(DIRECTORY include/
 )
 ament_export_targets(export_${PROJECT_NAME})
 ament_export_dependencies(
-  gz_math_vendor
-  gz-math
+  ${IROBOT_CREATE_MATH_EXPORT_DEPS}
   rclcpp
 )
 

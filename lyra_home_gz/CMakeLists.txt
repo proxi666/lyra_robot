@@ -43,6 +43,7 @@ foreach(path ${floorplans})
     add_custom_command(
       DEPENDS ${map_path}
       COMMAND ros2 run rmf_building_map_tools building_map_generator gazebo ${map_path} ${output_world_path} ${output_model_dir}
+      COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/scripts/fix_generated_world.py ${output_world_path} ${output_world_name}
       OUTPUT ${output_world_path}
     )
   else()
@@ -51,6 +52,7 @@ foreach(path ${floorplans})
       DEPENDS ${map_path}
       COMMAND ros2 run rmf_building_map_tools building_map_generator gazebo ${map_path} ${output_world_path} ${output_model_dir}
       COMMAND ros2 run rmf_building_map_tools building_map_model_downloader ${map_path} -e ~/.gazebo/models
+      COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/scripts/fix_generated_world.py ${output_world_path} ${output_world_name}
       OUTPUT ${output_world_path}
     )
   endif()

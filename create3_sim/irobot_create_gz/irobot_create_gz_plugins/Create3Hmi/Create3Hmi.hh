@@ -13,14 +13,18 @@
 #include <gz/gui/Plugin.hh>
 #include <gz/transport/Node.hh>
 
+#ifdef IROBOT_CREATE_USE_IGNITION_GUI
+namespace create3_gui = ignition::gui;
+namespace create3_transport = ignition::transport;
+#else
+namespace create3_gui = gz::gui;
+namespace create3_transport = gz::transport;
+#endif
 
-namespace gz
+namespace irobot_create_gz_plugins
 {
 
-namespace gui
-{
-
-class Create3Hmi : public Plugin
+class Create3Hmi : public create3_gui::Plugin
 {
   Q_OBJECT
 
@@ -60,14 +64,12 @@ protected slots:
   void OnCreate3Button(const int button);
 
 private:
-  gz::transport::Node node_;
-  gz::transport::Node::Publisher create3_button_pub_;
+  create3_transport::Node node_;
+  create3_transport::Node::Publisher create3_button_pub_;
   std::string namespace_ = "";
   std::string create3_button_topic_ = "/create3_buttons";
 };
 
-}  // namespace gui
-
-}  // namespace gz
+}  // namespace irobot_create_gz_plugins
 
 #endif  // IROBOT_CREATE_GZ__IROBOT_CREATE_GZ_PLUGINS__CREATE3HMI__CREATE3HMI_HH_
