@@ -19,7 +19,7 @@ ARGUMENTS = [
     DeclareLaunchArgument('use_sim_time', default_value='true',
                           choices=['true', 'false'],
                           description='use_sim_time'),
-    DeclareLaunchArgument('world', default_value='depot',
+    DeclareLaunchArgument('world', default_value='home',
                           description='Ignition World'),
 ]
 

@@ -38,7 +38,7 @@ def generate_launch_description():
         'collision_monitor',
         'bt_navigator',
         'waypoint_follower',
-        'docking_server',
+        # 'docking_server',  # Disabled: no dock instances configured
         'map_saver',
         'map_server',
     ]
