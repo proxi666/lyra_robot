@@ -7,6 +7,7 @@
   <xacro:include filename="$(find irobot_create_description)/urdf/sensors/cliff_sensor.urdf.xacro"/>
   <xacro:include filename="$(find irobot_create_description)/urdf/sensors/imu.urdf.xacro" />
   <xacro:include filename="$(find irobot_create_description)/urdf/sensors/lidar.urdf.xacro" />
+  <xacro:include filename="$(find irobot_create_description)/urdf/sensors/rgbd_camera.urdf.xacro" />
   <xacro:include filename="$(find irobot_create_description)/urdf/sensors/ir_intensity.urdf.xacro" />
   <xacro:include filename="$(find irobot_create_description)/urdf/sensors/ir_opcode_receivers.urdf.xacro" />
   <xacro:include filename="$(find irobot_create_description)/urdf/sensors/optical_mouse.urdf.xacro"/>
@@ -122,6 +123,11 @@
   <xacro:lidar_sensor gazebo="$(arg gazebo)" namespace="$(arg namespace)">
     <origin xyz="0.0 0.0 ${0.05 + base_link_z_offset}"/>
   </xacro:lidar_sensor>
+
+  <!-- Front RGB-D camera for semantic navigation experiments -->
+  <xacro:rgbd_camera_sensor gazebo="$(arg gazebo)" namespace="$(arg namespace)">
+    <origin xyz="0.135 0 ${0.135 + base_link_z_offset}" rpy="0 ${10*deg2rad} 0"/>
+  </xacro:rgbd_camera_sensor>
 
   <xacro:if value="${'$(arg gazebo)' == 'classic'}">
     <gazebo>

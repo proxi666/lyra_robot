@@ -98,6 +98,71 @@ def generate_launch_description():
                     'create3/lidar_link/lidar'
             ])
 
+    camera_color_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        name='camera_color_bridge',
+        output='screen',
+        parameters=[{
+            'use_sim_time': use_sim_time
+        }],
+        arguments=[
+            ['/camera/image' +
+             '@sensor_msgs/msg/Image[ignition.msgs.Image']
+        ],
+        remappings=[
+            ('/camera/image', 'camera/color/image_raw')
+        ])
+
+    camera_info_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        name='camera_info_bridge',
+        output='screen',
+        parameters=[{
+            'use_sim_time': use_sim_time
+        }],
+        arguments=[
+            ['/camera/camera_info' +
+             '@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo']
+        ],
+        remappings=[
+            ('/camera/camera_info', 'camera/color/camera_info')
+        ])
+
+    camera_depth_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        name='camera_depth_bridge',
+        output='screen',
+        parameters=[{
+            'use_sim_time': use_sim_time
+        }],
+        arguments=[
+            ['/camera/depth_image' +
+             '@sensor_msgs/msg/Image[ignition.msgs.Image']
+        ],
+        remappings=[
+            ('/camera/depth_image', 'camera/depth/image_raw')
+        ])
+
+    camera_points_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        name='camera_points_bridge',
+        output='screen',
+        parameters=[{
+            'use_sim_time': use_sim_time,
+            'lazy': True
+        }],
+        arguments=[
+            ['/camera/points' +
+             '@sensor_msgs/msg/PointCloud2[ignition.msgs.PointCloudPacked']
+        ],
+        remappings=[
+            ('/camera/points', 'camera/depth/points')
+        ])
+
     map_odom_tf = Node(package='tf2_ros', executable='static_transform_publisher',
             namespace = namespace,
             name = 'lidar_tf',
@@ -234,6 +299,10 @@ def generate_launch_description():
     ld.add_action(cmd_vel_bridge)
     ld.add_action(lidar_bridge)
     ld.add_action(lidar_tf)
+    ld.add_action(camera_color_bridge)
+    ld.add_action(camera_info_bridge)
+    ld.add_action(camera_depth_bridge)
+    ld.add_action(camera_points_bridge)
     ld.add_action(map_odom_tf)
     ld.add_action(pose_bridge)
     ld.add_action(odom_base_tf_bridge)
