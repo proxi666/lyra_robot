@@ -54,3 +54,5 @@ CATKIN_IGNORE
 
 # Local agent / workspace metadata
 .serena/
+.agents/
+skills-lock.json
