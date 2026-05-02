@@ -126,7 +126,7 @@
 
   <!-- Front RGB-D camera for semantic navigation experiments -->
   <xacro:rgbd_camera_sensor gazebo="$(arg gazebo)" namespace="$(arg namespace)">
-    <origin xyz="0.135 0 ${0.135 + base_link_z_offset}" rpy="0 ${10*deg2rad} 0"/>
+    <origin xyz="0.155 0 ${0.055 + base_link_z_offset}" rpy="0 ${8*deg2rad} 0"/>
   </xacro:rgbd_camera_sensor>
 
   <xacro:if value="${'$(arg gazebo)' == 'classic'}">
