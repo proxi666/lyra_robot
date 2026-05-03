@@ -1,0 +1,21 @@
+objects:
+  - label: sofa
+    aliases: [couch, seating, seating_area]
+  - label: chair
+    aliases: [seat]
+  - label: table
+    aliases: [desk_table]
+  - label: fridge
+    aliases: [refrigerator]
+  - label: door
+    aliases: [doorway, entrance]
+  - label: charging_dock
+    aliases: [dock, charger, charging_station]
+  - label: bed
+    aliases: [sleeping_area]
+  - label: desk
+    aliases: [work_table]
+  - label: tv
+    aliases: [television]
+  - label: plant
+    aliases: [potted_plant]

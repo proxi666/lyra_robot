@@ -1,0 +1,7 @@
+string instruction
+bool execute
+---
+bool success
+string message
+GraphObject target
+geometry_msgs/PoseStamped goal_pose_map

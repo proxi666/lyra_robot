@@ -1,0 +1,37 @@
+regions:
+  - region_id: living_room
+    label: living_room
+    polygon:
+      - [-6.0, -3.5]
+      - [0.0, -3.5]
+      - [0.0, 2.0]
+      - [-6.0, 2.0]
+    policy_default: neutral
+    default_cost: 0.0
+  - region_id: kitchen
+    label: kitchen
+    polygon:
+      - [0.0, -3.5]
+      - [5.5, -3.5]
+      - [5.5, 1.5]
+      - [0.0, 1.5]
+    policy_default: neutral
+    default_cost: 0.0
+  - region_id: hallway
+    label: hallway
+    polygon:
+      - [-2.5, 1.5]
+      - [5.5, 1.5]
+      - [5.5, 4.0]
+      - [-2.5, 4.0]
+    policy_default: neutral
+    default_cost: 0.0
+  - region_id: bedroom
+    label: bedroom
+    polygon:
+      - [-6.0, 2.0]
+      - [-2.5, 2.0]
+      - [-2.5, 5.5]
+      - [-6.0, 5.5]
+    policy_default: neutral
+    default_cost: 0.0

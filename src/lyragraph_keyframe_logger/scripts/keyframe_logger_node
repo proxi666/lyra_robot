@@ -1,0 +1,7 @@
+#!/usr/bin/env python3
+
+from lyragraph_keyframe_logger.keyframe_logger import main
+
+
+if __name__ == '__main__':
+    main()

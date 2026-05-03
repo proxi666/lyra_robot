@@ -1,0 +1,10 @@
+string object_id
+string label
+string[] aliases
+geometry_msgs/Pose object_pose_map
+geometry_msgs/Pose reachable_pose_map
+string region_id
+float32 confidence
+int32 observations
+builtin_interfaces/Time first_seen
+builtin_interfaces/Time last_seen

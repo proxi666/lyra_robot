@@ -56,3 +56,7 @@ CATKIN_IGNORE
 .serena/
 .agents/
 skills-lock.json
+
+# LyraGraph runtime artifacts
+data/lyragraph_runs/
+data/lyragraph_graphs/

@@ -1,0 +1,7 @@
+string target_label
+string region_label
+string near_label
+---
+bool success
+string message
+GraphObject[] matches
