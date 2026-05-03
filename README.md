@@ -1,193 +1,307 @@
 # Lyra Robot
 
-Lyra is a ROS 2 mobile robot workspace centered on a simulated home-assistant robot built on the iRobot Create 3 platform. The repository combines a custom home environment, SLAM, Nav2-based navigation, and the Create 3 Gazebo simulation stack into one workspace.
+Lyra Robot is a ROS 2 Humble workspace for simulated indoor mobile robot navigation and semantic navigation research. It combines an iRobot Create 3 simulation stack, a custom Gazebo home world, SLAM, Nav2 navigation, RGB-D sensing, and an experimental LyraGraph semantic navigation layer.
 
-The original work in this repository was put together by Chirag Makwana. In its current form, Lyra is a classical ROS 2 navigation stack for a homemaker robot.
+The project is simulation-first and targets Ubuntu 22.04 with ROS 2 Humble.
 
-## What Chirag Built
+## Highlights
 
-The current workspace already covers the main pieces needed for indoor robot navigation:
+- Gazebo home environment for indoor navigation experiments.
+- iRobot Create 3 robot simulation with differential drive control.
+- Nav2 planning, control, recovery behavior, costmaps, and RViz visualization.
+- Cartographer-based 2D SLAM and saved-map navigation support.
+- Simulated RGB-D camera with ROS-GZ bridges for color image, depth image, camera info, and point cloud topics.
+- RGB-D probe node for validating camera streams.
+- LyraGraph MVP packages for semantic keyframe logging, offline object grounding, graph fusion, graph storage, and language-to-Nav2 goal resolution.
 
-- A custom home simulation environment in Gazebo.
-- A Create 3 robot simulation stack with robot description, control, sensors, and docking support.
-- 2D SLAM support using Cartographer and a separate lifelong mapping path using `slam_toolbox`.
-- A Nav2 bringup with planner, controller, behavior server, waypoint follower, collision monitor, map server, and docking server.
-- A saved occupancy map for localization and navigation in the home environment.
+## Repository Layout
 
-In short, this repo is not just a single demo launch file. It is a full ROS 2 workspace for simulated indoor mobile navigation.
+```text
+.
+├── config/lyragraph/              # Ontology, perception, and manual region config
+├── src/
+│   ├── create3_sim/               # Vendored Create 3 simulation packages
+│   ├── lyra_home_gz/              # Gazebo home world and world generation helpers
+│   ├── lyra_navigation/           # Nav2 launch files, parameters, and RViz config
+│   ├── lyra_perception/           # RGB-D camera sanity/probe node
+│   ├── lyra_robot/                # Workspace-level robot package
+│   ├── lyra_slam/                 # Cartographer, slam_toolbox config, and saved maps
+│   ├── lyragraph_bringup/         # Semantic runtime launch wrapper
+│   ├── lyragraph_fusion/          # Offline detection fusion into semantic graph nodes
+│   ├── lyragraph_keyframe_logger/ # RGB-D keyframe and pose logger
+│   ├── lyragraph_msgs/            # Custom graph messages and services
+│   ├── lyragraph_nav_bridge/      # Language query to Nav2 goal bridge
+│   ├── lyragraph_perception/      # Offline VLM/object detection grounding pipeline
+│   └── lyragraph_store/           # Semantic graph store, query service, and markers
+├── research.md                    # Research direction and roadmap notes
+└── lyra_robot_guide.md            # Learning-oriented ROS 2/Nav2 guide
+```
 
-## Workspace Layout
+Runtime folders such as `build/`, `install/`, `log/`, and generated LyraGraph data are ignored by git.
 
-This workspace contains both Lyra-specific packages and the Create 3 simulation packages it depends on.
+## System Architecture
 
-### Lyra Packages
+Lyra has two layers:
 
-- `lyra_home_gz`
-  Builds the custom home world from a building description and generates Gazebo assets, navigation graphs, and crowd simulation artifacts.
+1. Classical navigation layer
+   - Gazebo simulates the home and robot.
+   - ROS-GZ bridges expose simulated sensors and control topics.
+   - SLAM or a saved occupancy map provides geometry.
+   - Nav2 handles global planning, local control, costmaps, recovery, and `/cmd_vel` execution.
 
-- `lyra_slam`
-  Contains SLAM launch files, mapping configs, RViz configs, and the saved map used by navigation.
+2. Semantic navigation layer
+   - RGB-D keyframes are sampled during mapping/navigation.
+   - Offline perception extracts object labels and image-space detections.
+   - Depth and stored camera poses ground detections into the ROS `map` frame.
+   - Detections are fused into persistent object nodes.
+   - A semantic graph stores objects, regions, relations, confidence, and reachable poses.
+   - A language bridge resolves supported text instructions into validated Nav2 goals.
 
-- `lyra_navigation`
-  Contains the Nav2 launch files, RViz config, and navigation parameters for planning and control.
+Nav2 remains the execution authority. LyraGraph provides semantic goal selection and graph memory.
 
-- `lyra_robot`
-  Package shell for the overall robot workspace.
+## Current Capabilities
 
-- `lyra_behavior`
-  Placeholder package for higher-level task or behavior logic.
+### Navigation
 
-### Create 3 Simulation Packages
+- Load a custom furnished home world in Gazebo.
+- Spawn and control a Create 3 robot.
+- Publish laser scan, odometry, TF, robot state, and simulated Create 3 sensor topics.
+- Run Cartographer SLAM.
+- Run Nav2 with global and local costmaps.
+- Send direct velocity commands through `/cmd_vel`.
 
-The `create3_sim/` subtree vendors the iRobot Create 3 simulation stack and provides:
+### RGB-D Perception
 
-- robot description and URDF/Xacro
-- Gazebo bridging
-- differential drive control
-- robot state publishers
-- Create 3 sensor publishers and internal support nodes
-- docking-related simulation support
+The simulated RGB-D camera publishes:
 
-## Current Architecture
+- `/camera/color/image_raw`
+- `/camera/color/camera_info`
+- `/camera/depth/image_raw`
+- `/camera/depth/points`
 
-At the moment, Lyra uses a standard geometric navigation pipeline:
+The `lyra_perception` probe subscribes to RGB, depth, and camera info, then publishes a compact health summary on:
 
-1. The custom home world is loaded in Gazebo.
-2. The Create 3 robot is spawned into the environment.
-3. Laser-based SLAM or saved-map navigation is used for map-aware motion.
-4. Nav2 handles path planning, local control, recovery behavior, and command velocity output.
+- `/lyra/perception/rgbd_probe`
 
-The current stack is classical ROS 2 navigation, not yet a vision-language navigation system.
+### LyraGraph MVP
 
-## Key Capabilities Today
+The semantic navigation MVP includes:
 
-- Simulated indoor home environment.
-- Differential-drive mobile robot simulation.
-- Laser scan based mapping and navigation.
-- Nav2 global planning and local control.
-- Collision monitoring.
-- Docking server configuration.
-- RViz visualization for SLAM and navigation.
+- RGB-D keyframe logging with map-frame robot and camera poses.
+- Offline VLM/object-detection entry point using `Qwen2.5-VL-3B-Instruct` as the intended model backend.
+- Mock detection mode for testing the graph pipeline without running the model.
+- Depth-based 3D grounding into the ROS `map` frame.
+- Object fusion by label and distance.
+- Manual region assignment using polygons.
+- Query service for semantic graph lookup.
+- Navigation bridge for a small supported instruction set:
+  - `go to the sofa`
+  - `go to the chair in the kitchen`
+  - `go to the table near the sofa`
 
-## What Is In The Home Environment
+## Requirements
 
-The home environment is defined from a building description in `lyra_home_gz/floorplans/home.building.yaml`. It includes a furnished apartment-style layout with objects such as:
-
-- sofa
-- tables and chairs
-- beds
-- sinks
-- toilets
-- fridge
-- desks
-- TV stand
-- storage cabinets
-
-## Navigation Stack
-
-The navigation setup in `lyra_navigation` is based on Nav2 and currently includes:
-
-- `planner_server`
-- `controller_server`
-- `smoother_server`
-- `behavior_server`
-- `bt_navigator`
-- `waypoint_follower`
-- `velocity_smoother`
-- `collision_monitor`
-- `map_server`
-- `map_saver`
-- `opennav_docking`
-
-The current controller is MPPI-based, and the planner is NavFn-based. The local and global costmaps are built around a laser scan input on `/scan`.
-
-## SLAM Stack
-
-The repository contains two mapping paths:
-
-- `cartographer_ros` for 2D SLAM
-- `slam_toolbox` lifelong mapping configuration
-
-There is also a saved map in `lyra_slam/maps/` that can be used directly with navigation.
-
-## Sensors Exposed In Simulation
-
-The Create 3 simulation stack currently exposes or uses:
-
-- lidar / laser scan
-- IMU
-- bumper contact
-- cliff sensors
-- IR intensity sensors
-- wheel and robot state information
-- docking-related interfaces
-
-There is no RGB camera pipeline integrated yet.
-
-## Prerequisites
-
-This repository assumes a ROS 2 environment with Gazebo and Nav2-related packages available. From the code and launch files, the workspace depends on components in the following areas:
-
-- ROS 2
-- Gazebo Harmonic / `ros_gz`
+- Ubuntu 22.04
+- ROS 2 Humble
+- Gazebo / Ignition Gazebo 6 stack used by the Create 3 simulation packages
 - Nav2
-- Cartographer
-- `slam_toolbox`
-- RMF building map tools
-- OpenNav docking
-- iRobot Create 3 ROS interfaces
+- Cartographer ROS
+- slam_toolbox
+- ros_gz bridge packages
+- OpenCV Python bindings for RGB-D keyframe image writing
+- Python packages used by the offline pipeline, including `numpy` and `PyYAML`
 
-The exact package installation may vary by ROS 2 distribution and host machine setup. This repository is best treated as a source workspace to be built inside an already-prepared ROS 2 simulation environment.
+Optional for VLM-backed detection:
+
+- PyTorch
+- Transformers with Qwen2.5-VL support
+- Qwen2.5-VL-3B-Instruct model weights
 
 ## Build
 
 From the workspace root:
 
 ```bash
+cd ~/projects/lyra_robot
+conda deactivate  # recommended when running ROS 2 commands
+source /opt/ros/humble/setup.bash
 colcon build --symlink-install
 source install/setup.bash
 ```
 
-If dependencies are missing, install them first with your normal ROS 2 workflow, for example `rosdep` or distribution-specific package installation.
+## Core Bringup
 
-## Typical Bringup Flow
+Use separate terminals unless noted. In each terminal:
 
-### 1. Launch the home simulation
+```bash
+cd ~/projects/lyra_robot
+conda deactivate
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+```
+
+### 1. Launch the home world
 
 ```bash
 ros2 launch lyra_home_gz _home.launch.xml
 ```
 
-### 2. Spawn the Create 3 robot stack
+For headless simulation:
+
+```bash
+ros2 launch lyra_home_gz _home.launch.xml headless:=true
+```
+
+### 2. Spawn the Create 3 robot
 
 ```bash
 ros2 launch irobot_create_gz_bringup create3_gz.launch.py
 ```
 
-### 3. Run navigation
-
-```bash
-ros2 launch lyra_navigation navigation.launch.py
-```
-
-### 4. Run SLAM if mapping is needed
+### 3. Run SLAM
 
 ```bash
 ros2 launch lyra_slam carto_slam.launch.py
 ```
 
-### 5. Optional lifelong mapping path
+### 4. Run Nav2
 
 ```bash
-ros2 launch lyra_slam lifelong_mapping.launch.py
+ros2 launch lyra_navigation navigation.launch.py
 ```
 
-## Notes On Current State
+## Quick Validation
 
-- `lyra_robot` and `lyra_behavior` are mostly scaffolding packages at this stage.
-- The real implemented work is in `lyra_home_gz`, `lyra_slam`, `lyra_navigation`, and `create3_sim`.
-- The current perception pipeline is laser-first. Camera-based understanding is not integrated yet.
+Check core ROS graph topics:
 
-## Attribution
+```bash
+ros2 topic list | grep -E "^/scan$|^/odom$|^/map$|^/tf$|^/cmd_vel$"
+```
 
-Original Lyra workspace and package structure by Chirag Makwana.
+Check RGB-D camera topics:
+
+```bash
+ros2 topic list | grep camera
+ros2 topic echo /camera/color/camera_info --once
+ros2 topic echo /camera/color/image_raw --field header --once
+ros2 topic echo /camera/depth/image_raw --field header --once
+```
+
+Run the RGB-D probe:
+
+```bash
+ros2 launch lyra_perception rgbd_probe.launch.py
+ros2 topic echo /lyra/perception/rgbd_probe --once
+```
+
+Send a short manual velocity command:
+
+```bash
+ros2 topic pub /cmd_vel geometry_msgs/msg/TwistStamped \
+"{header: {frame_id: 'base_link'}, twist: {linear: {x: 0.2}, angular: {z: 0.0}}}" -r 10
+```
+
+Stop it with `Ctrl+C`.
+
+## LyraGraph Workflow
+
+### 1. Log RGB-D keyframes
+
+Run this while the world, robot, TF, and camera topics are active:
+
+```bash
+ros2 launch lyragraph_keyframe_logger keyframe_logger.launch.py run_id:=home_test
+```
+
+Output is written to:
+
+```text
+data/lyragraph_runs/home_test/
+```
+
+Each sampled frame stores:
+
+- RGB image
+- depth array
+- camera intrinsics
+- camera pose in `map`
+- robot pose in `map`
+- timestamp
+
+### 2. Build detections offline
+
+For pipeline testing without the VLM:
+
+```bash
+ros2 run lyragraph_perception build_detections \
+  --run-dir data/lyragraph_runs/home_test \
+  --mock-detections /path/to/mock_detections.jsonl \
+  --output data/lyragraph_runs/home_test/detections.jsonl
+```
+
+For Qwen-backed detection, run the same command without `--mock-detections` after the model environment is configured. The mock file is optional and is only meant for pipeline tests.
+
+### 3. Fuse detections into a graph
+
+```bash
+mkdir -p data/lyragraph_graphs/home_test
+
+ros2 run lyragraph_fusion build_graph \
+  --detections data/lyragraph_runs/home_test/detections.jsonl \
+  --output data/lyragraph_graphs/home_test/graph.json \
+  --run-id home_test
+```
+
+### 4. Run the semantic graph runtime
+
+```bash
+ros2 launch lyragraph_bringup semantic_runtime.launch.py \
+  graph_file:=data/lyragraph_graphs/home_test/graph.json
+```
+
+This starts:
+
+- graph store
+- graph query service
+- semantic navigation bridge
+- visualization markers
+
+### 5. Query a semantic goal
+
+```bash
+ros2 service call /lyragraph/resolve_semantic_goal lyragraph_msgs/srv/ResolveSemanticGoal \
+"{instruction: 'go to the sofa', execute: false}"
+```
+
+Set `execute: true` only when Nav2 is active and the goal should be sent to the robot.
+
+## Data Outputs
+
+Generated runtime data is intentionally not committed:
+
+```text
+data/lyragraph_runs/
+data/lyragraph_graphs/
+```
+
+Semantic graph outputs are JSON files designed for inspection, debugging, and repeatable offline testing.
+
+## Development Notes
+
+- Keep ROS commands outside Conda unless a specific ML environment is needed.
+- Use the Qwen/ML environment only for offline perception if ROS Python dependencies are not available there.
+- Keep generated data, build outputs, local tool files, and model weights out of git.
+- The current semantic graph pipeline is an MVP and is intentionally conservative: offline build first, manual regions first, Nav2 execution preserved.
+
+## Roadmap
+
+- Improve object detection reliability and ontology coverage.
+- Add better reachable-pose sampling around semantic objects.
+- Add richer object-region and object-object relations.
+- Add semantic graph visualization in RViz.
+- Add semantic costmap layers for constraints such as restricted or avoided regions.
+- Evaluate semantic navigation success rate across repeated simulation runs.
+
+## License
+
+See package-level license files where available.
